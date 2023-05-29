@@ -16,12 +16,12 @@ public class movimento : MonoBehaviour
 
     private Animator anim;
     private SpriteRenderer sprite;
-    
+
     public GameObject projetil;
     public Transform PosicaoProjetil;
 
     public float velocite;
-
+    public bool verificarDirecao;
 
 
     void Start()
@@ -52,17 +52,15 @@ public class movimento : MonoBehaviour
 
         anim.SetInteger("run", (int)movimentoX); //animação de correr
 
-        if (movimentoX > 0)
+        if (movimentoX > 0 && verificarDirecao == true)
         {
-
-            rplayer = new Vector3(1,transform.localScale.y,transform.localScale.z);
-            velocite = 10;
+            Flip();
+            
         }
-        else if (movimentoX < 0)
+        else if (movimentoX < 0 && verificarDirecao == false)
         {
-            rplayer = new Vector3(-1, transform.localScale.y, transform.localScale.z);
-            velocite = -10;
-        
+            Flip();
+
         }
 
 
@@ -75,7 +73,15 @@ public class movimento : MonoBehaviour
 
             temp.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(velocite, 0);
 
+            Destroy(temp.gameObject, 4);
+
+            anim.SetBool("tiro", true);
         }
+        else if (Input.GetButtonUp("Fire1"))
+        {
+            anim.SetBool("tiro", false);
+        }
+
 
 
     }
@@ -85,5 +91,17 @@ public class movimento : MonoBehaviour
         //cria um sensor em posição com o raio e layer tambem definida
         sensor = Physics2D.OverlapCircle(posicaoSensor.position, 0.1f, layerChao);
 
+
+    }
+    
+    public void Flip() 
+    {
+        verificarDirecao = !verificarDirecao;
+
+        float x = transform.localScale.x * -1;
+
+        transform.localScale = new Vector3(x, transform.localScale.y, transform.localScale.z);
+        velocite *= -1;
     }
 }
+
